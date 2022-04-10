@@ -1,0 +1,4 @@
+inquirer==2.8.0
+translatepy==2.3
+requests==2.26.0
+eyed3==0.9.6

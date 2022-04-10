@@ -1,7 +1,9 @@
+from pathlib import Path
+import magic
 from eyed3.id3 import Tag
 from id3.lyrics import LyricsProvider
 
-from id3.provider import Provider
+from id3.provider import DEFAULT_IMAGE, Provider
 
 
 def complete(title: str, provider: Provider, tag: Tag = None, is_id: bool = False) -> Tag:
@@ -28,6 +30,27 @@ def complete(title: str, provider: Provider, tag: Tag = None, is_id: bool = Fals
     >>> from id3.tags import complete
     >>> s = Spotify(CLIENT_ID, CLIENT_SECRET)
     >>> complete("Renai Circulation", s)
+
+    Notes
+    -----
+    Here is a list of the fields that will be used
+        - artist.name
+        - album.name
+        - name
+        - track_number
+        - disc_number
+        - analysis.tempo
+        - album.release_date
+        - artist.genres
+        - url
+        - artist.url
+        - image or album.image
+
+    Here are the fields used by Spotify
+        - artist.name
+        - album.name
+        - name
+        - image or album.image
     """
     if tag is None:
         tag = Tag()
@@ -35,22 +58,52 @@ def complete(title: str, provider: Provider, tag: Tag = None, is_id: bool = Fals
         result = provider.get(title)
     else:
         result = provider.search(title)
-    tag.artist = ", ".join(artist.name for artist in result.artists)
+    if len(result.artists) > 0:
+        if hasattr(result.artists[0], "url"):
+            tag.artist_url = result.artists[0].url
+        tag.artist = ", ".join(artist.name for artist in result.artists if hasattr(artist, "name"))
+        tag.genre = ", ".join([", ".join(artist.genres) for artist in result.artists])  # we are setting all of the artists genres
     tag.album_artist = tag.artist
-    tag.album = result.album.name
-    tag.title = result.name
-    tag.track_num = result.track_number
+    if hasattr(result, "album"):
+        album = result.album
+        if hasattr(album, "name"):
+            tag.album = album.name
+        if hasattr(album, "release_date"):
+            tag.release_date = album.release_date
+    if hasattr(result, "name"):
+        tag.title = result.name
+    if hasattr(result, "track_number"):
+        tag.track_num = result.track_number
     tag.disc_num = result.disc_number
-    if result.analysis.tempo is not None:
+    if result.analysis is not None and result.analysis.tempo is not None:
         tag.bpm = result.analysis.tempo
-    tag.release_date = result.album.release_date
-    tag.genre = ", ".join([", ".join(artist.genres) for artist in result.artists])  # we are setting all of the artists genres
-    tag.commercial_url = result.url
-    tag.artist_url = result.artists[0].url
+    if hasattr(result, "url"):
+        tag.commercial_url = result.url
     tag.encoded_by = "© ID3, Anime no Sekai"
-    r = provider.session.get(result.album.image)
-    r.raise_for_status()
-    tag.images.set(type_=3, img_data=r.content, mime_type=r.headers['Content-Type'], description="Cover Art", img_url=result.album.image)
+
+    if hasattr(result, "image") and result.image:
+        image = result.image
+    elif hasattr(result, "album") and hasattr(result.album, "image") and result.album.image:
+        image = result.album.image
+    else:
+        image = DEFAULT_IMAGE
+
+    if hasattr(image, "read"):
+        image = image.read()
+    if isinstance(image, bytes):
+        content = image
+    else:
+        image = str(image)
+        path = Path(image).resolve()
+        if path.is_file():
+            with open(path, "r+b") as f:
+                content = f.read()
+        else:
+            r = provider.session.get(image)
+            if r.status_code >= 400:
+                return tag
+            content = r.content
+    tag.images.set(type_=3, img_data=content, mime_type=magic.from_buffer(content, mime=True), description="Cover Art")
     return tag
 
 

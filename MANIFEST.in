@@ -1,0 +1,2 @@
+recursive-include id3/providers/ *
+recursive-include id3/lyrics_providers/ *

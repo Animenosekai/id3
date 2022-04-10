@@ -3,6 +3,10 @@ from id3.request import Session
 from id3.types import ALBUM_TYPE, MODALITY
 
 
+# DEFAULT_IMAGE = "https://i.pinimg.com/564x/e9/c5/c7/e9c5c72d35ee6bcdd8ae3fca2ba0919e.jpg"
+DEFAULT_IMAGE = "/Users/animenosekai/Documents/Coding/Projects/id3/ninym_hmm.jpg"
+
+
 class Analysis:
     tempo: float
     """the estimated tempo of the audio file"""
@@ -15,23 +19,31 @@ class Analysis:
     mode: MODALITY
 
     def __repr__(self) -> str:
-        return f"Analaysis(tempo={self.tempo}, ...)"
+        if hasattr(self, 'tempo'):
+            return f"Analaysis(tempo={self.tempo}, ...)"
+        return "Analaysis(...)"
 
 
 class Artist:
-    genres: list
+    genres: list = []
     """the genres of the artist"""
     id: str
     """the id of the artist"""
     name: str
     """the name of the artist"""
-    image: str
+    image: str = DEFAULT_IMAGE
     """the url of the artist's image"""
     url: str
     """the url of the artist"""
 
     def __repr__(self) -> str:
-        return f"Artist(name='{self.name}', id='{self.id}')"
+        if hasattr(self, "name") and hasattr(self, "id"):
+            return f"Artist(name='{self.name}', id='{self.id}')"
+        if hasattr(self, "name"):
+            return f"Artist(name='{self.name}')"
+        if hasattr(self, "id"):
+            return f"Artist(id='{self.id}')"
+        return "Artist()"
 
 
 class Album:
@@ -43,7 +55,7 @@ class Album:
     """the name of the album"""
     id: str
     """the id of the album"""
-    image: str
+    image: str = DEFAULT_IMAGE
     """the url of the album image"""
     release_date: datetime
     """the release date of the album"""
@@ -51,17 +63,23 @@ class Album:
     """the url of the album"""
 
     def __repr__(self) -> str:
-        return f"Album(name='{self.name}', id='{self.id}')"
+        if hasattr(self, "name") and hasattr(self, "id"):
+            return f"Album(name='{self.name}', id='{self.id}')"
+        if hasattr(self, "name"):
+            return f"Album(name='{self.name}')"
+        if hasattr(self, "id"):
+            return f"Album(id='{self.id}')"
+        return "Album()"
 
 
 class Track:
-    artists: list[Artist]
+    artists: list[Artist] = []
     """the artists of the track"""
     id: str
     """the id of the track"""
     name: str
     """the name of the track"""
-    image: str = None
+    image: str
     """the url of the track image"""
     album: Album
     """the album of the track"""
@@ -84,7 +102,13 @@ class Track:
     isrc: str = None
 
     def __repr__(self) -> str:
-        return f"Track(name='{self.name}', id='{self.id}')"
+        if hasattr(self, "name") and hasattr(self, "id"):
+            return f"Track(name='{self.name}', id='{self.id}')"
+        if hasattr(self, "name"):
+            return f"Track(name='{self.name}')"
+        if hasattr(self, "id"):
+            return f"Track(id='{self.id}')"
+        return "Track()"
 
 
 class Provider:

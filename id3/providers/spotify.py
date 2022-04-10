@@ -1,5 +1,4 @@
 from base64 import b64encode
-from datetime import datetime
 from id3.provider import Analysis, Provider, Track, Album, Artist
 
 
