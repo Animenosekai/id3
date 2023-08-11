@@ -1,0 +1,73 @@
+[tool.poetry]
+name = "id3"
+version = "1.0"
+description = "The most easy way to add ID3 tags to your music."
+license = "MIT"
+authors = ["Animenosekai <animenosekai.mail@gmail.com>"]
+maintainers = ["Animenosekai <animenosekai.mail@gmail.com>"]
+readme = "README.md"
+repository = "https://github.com/Animenosekai/id3"
+documentation = "https://github.com/Animenosekai/id3/blob/main/README.md"
+keywords = [
+    'animenosekai',
+    'id3',
+    'song',
+    'songs',
+    'music',
+    'mp3',
+    'metadata',
+    'spotify',
+]
+classifiers = [
+    # Status
+    "Development Status :: 4 - Beta",
+
+    # Environment
+    "Environment :: Console",
+
+    # Audience
+    "Intended Audience :: End Users/Desktop",
+
+    # Licensing
+    "License :: OSI Approved :: MIT License",
+
+    # Software Requirements
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+
+    # Topics
+    "Topic :: File Formats",
+    "Topic :: Multimedia :: Sound/Audio",
+
+    # Code quality
+    "Typing :: Typed",
+]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+inquirer = "^2.8"
+translatepy = "^2.3"
+requests = "^2.26"
+eyed3 = "^0.9"
+bson = "^0.5.10"
+youtube-dl = "^2021.12.17"
+yt-dlp = "^2023.7.6"
+python-magic = "^0.4.27"
+playsound = "^1.3"
+
+
+[tool.poetry.scripts]
+id3 = 'id3.__main__:main'
+yay = 'yay'
+
+[tool.poetry.urls]
+"Issue Tracker" = "https://github.com/Animenosekai/id3/issues"
+
+[tool.poetry.group.dev.dependencies]
+mypy = "^1.4.1"
+autopep8 = "^2.0.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

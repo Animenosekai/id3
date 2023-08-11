@@ -6,6 +6,7 @@ easily add songs to your spotify library
 import argparse
 import subprocess
 import tempfile
+import os
 from pathlib import Path
 
 import eyed3
@@ -15,12 +16,15 @@ from youtube_dl import YoutubeDL
 
 from id3.__main__ import main
 
-if __name__ == "__main__":
 
+def entry():
+    """the main cli entrypoint"""
     parser = argparse.ArgumentParser(prog='yay', description='The most easy way to add songs to your Spotify library.')
 
-    parser.add_argument("--ffmpeg", "-f", action="store", type=str, required=False, default=None)
-    parser.add_argument("--output", "-o", action="store", type=str, required=False, default=None)
+    parser.add_argument("--ffmpeg", "-f", action="store", type=str, required=False, default=None,
+                        help="The path to the `ffmpeg` executable, ('ffmpeg' by default)")
+    parser.add_argument("--output", "-o", action="store", type=str, required=False, default=None,
+                        help="The output directory for the song (the env var 'YAY_SONGS_OUTPUT_DIRECTORY' or './output' will be used by default)")
     args = parser.parse_args()
 
     def log_step(*messages):
@@ -29,7 +33,7 @@ if __name__ == "__main__":
 
     log_step("Setting output directory...")
     if args.output is None:
-        OUTPUT_DIRECTORY = Path('/Users/animenosekai/Documents/Songs/Spotify')
+        OUTPUT_DIRECTORY = Path(os.environ.get("YAY_SONGS_OUTPUT_DIRECTORY", "output"))
     else:
         OUTPUT_DIRECTORY = Path(args.output)
 
@@ -101,3 +105,7 @@ if __name__ == "__main__":
         log_step("Removing the temp file...")
         SONG_PATH.unlink()
     print("\033[92m[✓] Removed the temp file\033[0m")
+
+
+if __name__ == "__main__":
+    entry()

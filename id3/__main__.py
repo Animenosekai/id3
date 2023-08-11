@@ -76,7 +76,10 @@ def manage(audiofile: Path, provider: str, album: str = None, hint: str = None, 
                 spotify_id = inquirer.prompt([
                     inquirer.Text("spotify_id", "Spotify ID of the song")
                 ])["spotify_id"]
-            provider = Spotify(os.environ["SPOTIFY_CLIENT_ID"], os.environ["SPOTIFY_CLIENT_SECRET"])
+            try:
+                provider = Spotify(os.environ["SPOTIFY_CLIENT_ID"], os.environ["SPOTIFY_CLIENT_SECRET"])
+            except KeyError as err:
+                raise ValueError("You need to set the 'SPOTIFY_CLIENT_ID' and 'SPOTIFY_CLIENT_SECRET' environment variables to use the Spotify API") from err
         elif provider == "copy":
             provider = SameAlbumProvider(album, hint=hint)
             hint = provider.hint
