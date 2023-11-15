@@ -52,7 +52,7 @@ requests = "^2.26"
 eyed3 = "^0.9"
 bson = "^0.5.10"
 youtube-dl = "^2021.12.17"
-yt-dlp = "^2023.7.6"
+yt-dlp = "^2023.11.14"
 python-magic = "^0.4.27"
 playsound = "^1.3"
 
